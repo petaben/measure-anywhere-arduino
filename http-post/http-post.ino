@@ -9,10 +9,7 @@ GSMClient client;
 GPRS gprs;
 GSM gsmAccess(true);
 
-char server[] = "requestb.in";
-int port = 80;
-
-void setup() {  
+void setup() {
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
@@ -31,14 +28,14 @@ void setup() {
     }
   }
 
-  String content = "{\"text\":\"Yeah, I can post data from arduino :-)\"}";
+  String content = "{\"api_key\":\"XXX\", \"field1\":100}";
   String lengthText = "Content-Length: ";
   Serial.println("connecting...");
 
-  if (client.connect(server, port)) {
+  if (client.connect("api.thingspeak.com", 80)) {
     Serial.println("connected");
-    client.println("POST /11jbdwr1 HTTP/1.1");
-    client.println("Host: requestb.in");
+    client.println("POST /update.json HTTP/1.1");
+    client.println("Host: api.thingspeak.com");
     client.println("Content-Type: application/json");
     client.println(lengthText += content.length());
     client.println("");
@@ -49,6 +46,10 @@ void setup() {
 }
 
 void loop() {
-  ;
+  //output response from server if available
+  if (client.available()) {
+    char c = client.read();
+    Serial.print(c);
+  }
 }
 
